@@ -8,13 +8,11 @@ using System.Windows.Forms;
 using MetroFramework.Forms;
 using MetroFramework.Interfaces;
 
-namespace MetroFramework
-{
+namespace MetroFramework {
     /// <summary>
     /// Metro-styled message notification.
     /// </summary>
-    public static class MetroMessageBox
-    {
+    public static class MetroMessageBox {
         /// <summary>
         /// Shows a metro-styles message notification into the specified owner window.
         /// </summary>
@@ -22,8 +20,7 @@ namespace MetroFramework
         /// <param name="message"></param>
         /// <param name="height" optional=211></param>
         /// <returns></returns>
-        public static DialogResult Show(IWin32Window owner, String message,int height=211)
-        { return Show(owner, message, "Notification", height); }
+        public static DialogResult Show(IWin32Window owner, String message, int height = 211) { return Show(owner, message, "Notification", height); }
 
         /// <summary>
         /// Shows a metro-styles message notification into the specified owner window.
@@ -33,8 +30,7 @@ namespace MetroFramework
         /// <param name="title"></param>
         /// <param name="height" optional=211></param>
         /// <returns></returns>
-        public static DialogResult Show(IWin32Window owner, String message, String title, int height = 211)
-        { return Show(owner, message, title, MessageBoxButtons.OK, height); }
+        public static DialogResult Show(IWin32Window owner, String message, String title, int height = 211) { return Show(owner, message, title, MessageBoxButtons.OK, height); }
 
         /// <summary>
         /// Shows a metro-styles message notification into the specified owner window.
@@ -45,8 +41,7 @@ namespace MetroFramework
         /// <param name="buttons"></param>
         /// <param name="height" optional=211></param>
         /// <returns></returns>
-        public static DialogResult Show(IWin32Window owner, String message, String title, MessageBoxButtons buttons, int height = 211)
-        { return Show(owner, message, title, buttons, MessageBoxIcon.None, height); }
+        public static DialogResult Show(IWin32Window owner, String message, String title, MessageBoxButtons buttons, int height = 211) { return Show(owner, message, title, buttons, MessageBoxIcon.None, height); }
 
         /// <summary>
         /// Shows a metro-styles message notification into the specified owner window.
@@ -58,8 +53,7 @@ namespace MetroFramework
         /// <param name="icon"></param>
         /// <param name="height" optional=211></param>
         /// <returns></returns>
-        public static DialogResult Show(IWin32Window owner, String message, String title, MessageBoxButtons buttons, MessageBoxIcon icon, int height = 211)
-        { return Show(owner, message, title, buttons, icon, MessageBoxDefaultButton.Button1, height); }
+        public static DialogResult Show(IWin32Window owner, String message, String title, MessageBoxButtons buttons, MessageBoxIcon icon, int height = 211) { return Show(owner, message, title, buttons, icon, MessageBoxDefaultButton.Button1, height); }
 
         /// <summary>
         /// Shows a metro-styles message notification into the specified owner window.
@@ -72,14 +66,12 @@ namespace MetroFramework
         /// <param name="defaultbutton"></param>
         /// <param name="height" optional=211></param>
         /// <returns></returns>
-        public static DialogResult Show(IWin32Window owner, String message, String title, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultbutton, int height = 211)
-        {
+        public static DialogResult Show(IWin32Window owner, String message, String title, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultbutton, int height = 211) {
             DialogResult _result = DialogResult.None;
 
-            if (owner != null)
-            {
-                Form _owner = (Form)owner;
-                
+            if (owner != null) {
+                Form _owner = (owner as Form == null) ? ((UserControl)owner).ParentForm : (Form)owner;
+
                 //int _minWidth = 500;
                 //int _minHeight = 350;
 
@@ -100,8 +92,7 @@ namespace MetroFramework
                 //    _owner.Location = new Point(x, y);
                 //}
 
-                switch (icon)
-                {
+                switch (icon) {
                     case MessageBoxIcon.Error:
                         SystemSounds.Hand.Play(); break;
                     case MessageBoxIcon.Exclamation:
@@ -121,7 +112,7 @@ namespace MetroFramework
                 _control.Properties.Title = title;
                 _control.Padding = new Padding(0, 0, 0, 0);
                 _control.ControlBox = false;
-                _control.ShowInTaskbar = false;                
+                _control.ShowInTaskbar = false;
                 //_owner.Controls.Add(_control);
                 //if (_owner is IMetroForm)
                 //{
@@ -148,40 +139,31 @@ namespace MetroFramework
                 IAsyncResult _asyncresult = _delegate.BeginInvoke(_control, null, _delegate);
                 bool _cancelled = false;
 
-                try
-                {
-                    while (!_asyncresult.IsCompleted)
-                    { Thread.Sleep(1); Application.DoEvents(); }
-                }
-                catch 
-                {
+                try {
+                    while (!_asyncresult.IsCompleted) { Thread.Sleep(1); Application.DoEvents(); }
+                } catch {
                     _cancelled = true;
 
-                    if (!_asyncresult.IsCompleted)
-                    {
-                        try { _asyncresult = null; }
-                        catch { }
+                    if (!_asyncresult.IsCompleted) {
+                        try { _asyncresult = null; } catch { }
                     }
 
                     _delegate = null;
                 }
 
-                if (!_cancelled)
-                {
+                if (!_cancelled) {
                     _result = _control.Result;
                     //_owner.Controls.Remove(_control);
                     _control.Dispose(); _control = null;
                 }
-                 
+
             }
 
             return _result;
         }
 
-        private static void ModalState(MetroMessageBoxControl control)
-        {
-            while (control.Visible)
-            { }
+        private static void ModalState(MetroMessageBoxControl control) {
+            while (control.Visible) { }
         }
 
     }
